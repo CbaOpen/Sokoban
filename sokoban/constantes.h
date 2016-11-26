@@ -1,0 +1,58 @@
+//BASKEVITCH Claire 21500568
+//Toutes les constantes utilisés dans le programme
+
+#ifndef __CONSTANTE_H
+#define __CONSTANTE_H
+
+//taille du plateau
+#define N 26
+
+//structure du plateau
+	//structure d'une case
+	struct une_case {
+		int mode;  //mode personnage ou caisse
+		int etat;  //case vide, pleine(mur), emplacemment rangement: non changeable en mode jeu
+		};
+	
+struct plateau {
+	struct une_case la_case[N][N];
+	};
+
+typedef struct plateau PLATEAU;
+
+
+//mode d'une case
+#define VIDE 0
+#define CAISSE 1
+#define PERSO 2
+#define MUR 3
+
+//etat d'une case
+#define RIEN 0
+#define RANGEMENT 1
+
+//mode d'action (historique, recommencer niveau, changement de niveau, quitter le jeu)
+#define DEFAUT 0
+#define UNDO 1
+#define REDO 2
+#define INIT 3
+#define PRECEDANT 4
+#define SUIVANT 5
+#define QUITTER 6
+
+//constantes liées à l'affichage
+#define TAILLE_CASE 40
+#define LARG_BOUTON ((N*TAILLE_CASE)/6)
+#define HAUT_BOUTON (TAILLE_CASE)
+#define LARG_FENETRE (N*TAILLE_CASE)
+#define HAUT_FENETRE (N*TAILLE_CASE + 2*HAUT_BOUTON)
+#define TAILLE_POLICE 20
+
+//les différentes couleures
+#define COUL_CAISSE marron
+#define COUL_CAISSE_RANGE darkkhaki
+#define COUL_MUR bleumarine
+#define COUL_PERSO gold
+#define COUL_VIDE lightskyblue
+
+#endif
