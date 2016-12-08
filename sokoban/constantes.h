@@ -1,5 +1,5 @@
 //BASKEVITCH Claire 21500568
-//Toutes les constantes utilisés dans le programme
+//Toutes les constantes utilisées dans le programme
 
 #ifndef __CONSTANTE_H
 #define __CONSTANTE_H
@@ -14,8 +14,14 @@
 		int etat;  //case vide, pleine(mur), emplacemment rangement: non changeable en mode jeu
 		};
 	
+	//structure qui permet de pointer l'emplacement du personnage
+	struct personnage{
+		int x,y;
+		};
+	
 struct plateau {
 	struct une_case la_case[N][N];
+	struct personnage perso;
 	};
 
 typedef struct plateau PLATEAU;

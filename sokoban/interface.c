@@ -8,6 +8,7 @@
 //initialise la fenetre graphique ainsi que le mode d'affichage (ici mode automatique off)
 void init_affichage(){
 	init_graphics(LARG_FENETRE,HAUT_FENETRE);
+	SDL_WM_SetCaption("BASKEVITCH Claire - Projet Sokoban (2016)",NULL);
 	affiche_auto_off();
 	}
 	

@@ -7,6 +7,7 @@
 #include <uvsqgraphics.h>
 #include "constantes.h"
 #include "interface.h"
+#include "action.h"
 
 //initialise le plateau à vide au lancement du programme
 PLATEAU init_plateau(PLATEAU P){
@@ -26,7 +27,11 @@ PLATEAU choix_mode_etat(PLATEAU P, int x, int y, char caractere){
 	if (caractere == '#') P.la_case[x][y].mode = MUR;
 	if (caractere == '.') P.la_case[x][y].etat = RANGEMENT;
 	if (caractere == '$') P.la_case[x][y].mode = CAISSE;
-	if (caractere == '@') P.la_case[x][y].mode = PERSO;
+	if (caractere == '@'){
+		P.la_case[x][y].mode = PERSO;
+		P.perso.x = x;
+		P.perso.y = y;
+		}
 	if (caractere == '*') {
 		P.la_case[x][y].etat = RANGEMENT;
 		P.la_case[x][y].mode = CAISSE;
@@ -34,12 +39,14 @@ PLATEAU choix_mode_etat(PLATEAU P, int x, int y, char caractere){
 	if (caractere == '+') {
 		P.la_case[x][y].etat = RANGEMENT;
 		P.la_case[x][y].mode = PERSO;
+		P.perso.x = x;
+		P.perso.y = y;
 		}
 	return P;
 	}
 
 //lis le fichier contenant les niveaux et initialise le plateau du jeu
-PLATEAU lecture_fichier(PLATEAU P,char *str,char niveau[]){
+PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
 	int x=0,y=N; //commence lecture en haut à gauche du plateau
 	char c[N];
 	int caractere=0;
@@ -69,18 +76,26 @@ PLATEAU lecture_fichier(PLATEAU P,char *str,char niveau[]){
 
 /////// DEBUT DU MAIN /////////
 int main(int argc, char** argv){
-	PLATEAU P;
+	
+	PLATEAU P; int n=0;
 	init_affichage();
 	P = init_plateau(P);
 	
 	if (argc != 4 || strcmp(argv[1], "-n")!=0){ //si pas les bons arguments mis
-		fprintf(stderr, "erreur dans la ligne de commande\nformat attendu:\n%s -n nomFichier\n",argv[0]);
+		fprintf(stderr, "erreur dans la ligne de commande\nformat attendu:\n%s -n niveau nomFichier\n",argv[0]);
 		exit(EXIT_FAILURE);
 		}
 	
 	P = lecture_fichier(P,argv[3],argv[2]);
 	affiche_sokoban_jeu(P,argv[3],argv[2],50);
-		
+	
+	while(n<10){
+		P = fait_action(P);
+		P.la_case[3][2].mode=PERSO;
+		affiche_sokoban_jeu(P,argv[3],argv[2],30);
+		n++;
+		}
+	printf("%d\n",n);
 	wait_escape();
 	exit(0);
 	}
