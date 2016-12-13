@@ -3,4 +3,4 @@
 
 #include "constantes.h"
 
-PLATEAU fait_action(PLATEAU P);
+PLATEAU fait_action(PLATEAU P, int *niveau, int *coups_joues, char* str);

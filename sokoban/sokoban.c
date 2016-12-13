@@ -4,79 +4,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include <uvsqgraphics.h>
 #include "constantes.h"
+#include "lecture.h"
 #include "interface.h"
 #include "action.h"
 
-//initialise le plateau à vide au lancement du programme
-PLATEAU init_plateau(PLATEAU P){
-	int x,y;
-	
-	for(x=0;x<N;x++){
-		for (y=0;y<N;y++){
-			P.la_case[x][y].mode = VIDE;
-			P.la_case[x][y].etat = RIEN;
-			}
-		}
-	return P;
-	}
-	
-//lors de la lecture du fichier, fait correspondre chaque symbole avec sa signification dans le jeu
-PLATEAU choix_mode_etat(PLATEAU P, int x, int y, char caractere){
-	if (caractere == '#') P.la_case[x][y].mode = MUR;
-	if (caractere == '.') P.la_case[x][y].etat = RANGEMENT;
-	if (caractere == '$') P.la_case[x][y].mode = CAISSE;
-	if (caractere == '@'){
-		P.la_case[x][y].mode = PERSO;
-		P.perso.x = x;
-		P.perso.y = y;
-		}
-	if (caractere == '*') {
-		P.la_case[x][y].etat = RANGEMENT;
-		P.la_case[x][y].mode = CAISSE;
-		}
-	if (caractere == '+') {
-		P.la_case[x][y].etat = RANGEMENT;
-		P.la_case[x][y].mode = PERSO;
-		P.perso.x = x;
-		P.perso.y = y;
-		}
-	return P;
-	}
 
-//lis le fichier contenant les niveaux et initialise le plateau du jeu
-PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
-	int x=0,y=N; //commence lecture en haut à gauche du plateau
-	char c[N];
-	int caractere=0;
 	
-	FILE* fic = fopen(str,"r");
-	if (fic == NULL){ //test si le fichier est NULL
-		fprintf(stderr,"echec ouverture fichier %s\n",str);
-		exit(EXIT_FAILURE);
-		}
-	
-	while(strcmp(c,niveau) != 0){ //tant que le curseur n'est pas arrivé au niveau entré en argument
-		fscanf(fic,"%s",&c);  //utilisation de strcmp pour comparer des chaines de caractères
-		} 
-		
-	do{ //tant que le curseur n'est pas arrivé à la fin du fichier ou d'un ";"
-		caractere = fgetc(fic);
-		P = choix_mode_etat(P,x,y,caractere);		
-		x++;
-		if (caractere == '\n' || !(x<N)) { //si retour à la ligne ou x dépasse N (valeur max du tableau)
-			y--;						//passe à la ligne en dessous et remet x à gauche
-			x=0;
-			}
-		}while(caractere != ';' && caractere !=EOF);
-	fclose(fic);
-	return P;
-	}
+
+
 
 /////// DEBUT DU MAIN /////////
 int main(int argc, char** argv){
-	
+	int niveau, coups_joues=0;
 	PLATEAU P; int n=0;
 	init_affichage();
 	P = init_plateau(P);
@@ -87,12 +29,14 @@ int main(int argc, char** argv){
 		}
 	
 	P = lecture_fichier(P,argv[3],argv[2]);
-	affiche_sokoban_jeu(P,argv[3],argv[2],50);
+	affiche_sokoban_jeu(P,argv[3],argv[2],coups_joues);
+	niveau = atof(argv[2]);
 	
-	while(n<10){
-		P = fait_action(P);
-		P.la_case[3][2].mode=PERSO;
-		affiche_sokoban_jeu(P,argv[3],argv[2],30);
+	while(n<50){
+		P = fait_action(P, &niveau, &coups_joues, argv[3]);
+		sprintf(argv[2],"%d",niveau);		
+		affiche_sokoban_jeu(P,argv[3],argv[2],coups_joues);
+		sleep(1);
 		n++;
 		}
 	printf("%d\n",n);

@@ -5,7 +5,7 @@
 #define __CONSTANTE_H
 
 //taille du plateau
-#define N 26
+#define N 32
 
 //structure du plateau
 	//structure d'une case
@@ -42,7 +42,7 @@ typedef struct plateau PLATEAU;
 #define UNDO 1
 #define REDO 2
 #define INIT 3
-#define PRECEDANT 4
+#define PRECEDENT 4
 #define SUIVANT 5
 #define QUITTER 6
 
