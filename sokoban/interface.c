@@ -4,6 +4,7 @@
 #include <uvsqgraphics.h>
 #include "interface.h"
 #include "constantes.h"
+#include "jouer.h"
 
 //initialise la fenetre graphique ainsi que le mode d'affichage (ici mode automatique off)
 void init_affichage(){
@@ -130,11 +131,14 @@ void affiche_les_boutons_editeur(){
 	}
 	
 //affiche le plateau de jeu quand on joue
-void affiche_sokoban_jeu(PLATEAU P,char *nom_fichier, char *niveau, int coups_joues){
+void affiche_sokoban_jeu(PLATEAU P,INFO* I){
+	char niv[10];
+	
+	sprintf(niv,"%d",I->niveau);
 	fill_screen(COUL_VIDE);
 	affiche_plateau(P);
 	affiche_les_boutons_jeu();
-	affiche_info(nom_fichier,niveau,coups_joues);
+	affiche_info(I->nom_fic,niv,I->coups_joues);
 	affiche_all();
 	}
 

@@ -3,7 +3,7 @@
 
 #include <uvsqgraphics.h>
 #include "constantes.h"
-#include "action.h"
+#include "jouer.h"
 #include "lecture.h"
 
 //test si la case adjacente à laquelle on veut aller est un mur ou une caisse
@@ -21,7 +21,8 @@ int test(PLATEAU P,int x, int y){ //x et y sont des variables qui correspondent 
 	}
 
 //déplace le personnage et renvoie le nouveau plateau
-PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
+//gère cas par cas les déplacements vers le haut, le bas, la droite, la gauche
+PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I){
 	int result;
 			
 	if (fleche == FLECHE_HAUT){
@@ -32,7 +33,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.y +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		if (result == 2){
@@ -40,7 +41,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.perso.y +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x][P.perso.y+1].mode = CAISSE;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		}
@@ -53,7 +54,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.y -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		if (result == 2){
@@ -61,7 +62,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.perso.y -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x][P.perso.y-1].mode = CAISSE;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		}
@@ -74,7 +75,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.x -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		if (result == 2){
@@ -82,7 +83,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.perso.x -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x-1][P.perso.y].mode = CAISSE;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		}
@@ -95,7 +96,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.x +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		if (result == 2){
@@ -103,42 +104,49 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, int *coups_joues){
 			P.perso.x +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x+1][P.perso.y].mode = CAISSE;
-			*coups_joues += 1;
+			I->coups_joues += 1;
 			return P;
 			}
 		}
 	return P;
 	}
-	
-int gestion_touche(char touche, int *niveau){
+
+//renvoi le mode d'action demandé par les touches du clavier
+int gestion_touche(char touche, INFO* I){
 	
 	return DEFAUT;
 	}
 
-int gestion_clic(POINT p, int *niveau){
+//renvoi le mode d'action demandé par la souris
+int gestion_clic(POINT p, INFO* I){
 	if (p.y<(HAUT_FENETRE-HAUT_BOUTON)) return DEFAUT;
 	if (p.x<LARG_BOUTON) return UNDO;
 	if (p.x < (LARG_BOUTON*2)) return REDO;
 	if (p.x < (LARG_BOUTON*3)) return INIT;
-	if ((p.x < (LARG_BOUTON*4) && p.x > (LARG_BOUTON*3)) && (*niveau>1)){
-		*niveau = *niveau - 1;
-		return PRECEDENT;
+	if (p.x < (LARG_BOUTON*4)){
+		if(I->niveau>1){
+			I->niveau = I->niveau - 1;
+			return PRECEDENT;
+			}
+		else return DEFAUT;
 		}
-	if ((p.x < (LARG_BOUTON*5) && p.x > (LARG_BOUTON*4)) && (*niveau<50)){
-		*niveau = *niveau + 1;
-		return SUIVANT;
+	if (p.x < (LARG_BOUTON*5)){
+		if (I->niveau < I->nb_niv){
+			I->niveau = I->niveau + 1;
+			return SUIVANT;
+			}
+		else return DEFAUT;
 		}
-	if (p.x < LARG_FENETRE && p.x > (LARG_BOUTON*5)) {
+	if (p.x < LARG_FENETRE) {
 		return QUITTER;
 		}
 	return DEFAUT;
 	}
 
-PLATEAU gestion_action_bouton(PLATEAU P, int bouton, int *niveau, char* str){
+//execute les fonctions des boutons
+PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I){
 	char str_niv[10];
-	sprintf(str_niv,"%d",*niveau);
-	printf("%s\n",str_niv);
-	
+			
 	if (bouton == QUITTER) exit(0);
 	if (bouton == UNDO){
 		//fct undo
@@ -148,30 +156,38 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, int *niveau, char* str){
 		//fct redo
 		return P;
 		}
-	if (bouton == INIT || bouton == PRECEDENT || bouton == SUIVANT){
+	if (bouton == INIT){
+		sprintf(str_niv,"%d",I->niveau);
+		printf("%s\n",str_niv); //bug étrange qui n'apparait pas quand il y a le printf (explication du bug dans le rapport)
 		P = init_plateau(P);
-		P = lecture_fichier(P, str, str_niv);
+		P = lecture_fichier(P, I->nom_fic, str_niv);
 		return P;
+		}
+	if (bouton == PRECEDENT || bouton == SUIVANT){
+		sprintf(str_niv,"%d",I->niveau);
+		P = init_plateau(P);
+		P = lecture_fichier(P, I->nom_fic, str_niv);
+		I->coups_joues = 0;
 		}
 	return P;
 	}
 
 //fonction qui récupère l'action du joueur et appelle les fonctions associées à l'action faite
 //cette fonction est celle appelée dans le main
-PLATEAU fait_action(PLATEAU P, int *niveau, int *coups_joues, char* str){
+PLATEAU fait_action(PLATEAU P, INFO* I){
 	int fleche=0, event=0;
 	char touche;
-	POINT p;
+	POINT p; p.x=0; p.y=0;
 	int bouton=DEFAUT;
 	
 	event = wait_key_arrow_clic(&touche,&fleche,&p);
 	
 	if (event == EST_FLECHE) {
-		P = deplacer_perso(P,fleche, coups_joues);
+		P = deplacer_perso(P,fleche, I);
 		return P;
 		}
-	if (event == EST_TOUCHE) bouton = gestion_touche(touche, niveau);
-	if (event == EST_CLIC) bouton = gestion_clic(p, niveau);
-	P = gestion_action_bouton(P, bouton, niveau, str);
+	if (event == EST_TOUCHE) bouton = gestion_touche(touche, I);
+	if (event == EST_CLIC) bouton = gestion_clic(p, I);
+	P = gestion_action_bouton(P, bouton, I);
 	return P;
 	}
