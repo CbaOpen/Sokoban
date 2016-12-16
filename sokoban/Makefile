@@ -2,7 +2,7 @@
 
 CFLAGS=-c -g -Wall
 
-all: compil
+jouer: compil
 	./sokoban -n 1 sasquatch1.xsb
 	
 test: compil

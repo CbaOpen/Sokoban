@@ -13,13 +13,22 @@
 
 
 	
-
+int niveau_fini(PLATEAU P){
+	int x,y;
+	
+	for(x = 0; x <N; x++){
+		for(y = 0; y<N;y++){
+			if ((P.la_case[x][y].etat == RANGEMENT) && (P.la_case[x][y].mode != CAISSE)) return 0;
+			}
+		}
+	return 1;
+	}
 
 
 /////// DEBUT DU MAIN /////////
 int main(int argc, char** argv){
 	int niveau, coups_joues=0;
-	PLATEAU P; int n=0;
+	PLATEAU P;
 	init_affichage();
 	P = init_plateau(P);
 	
@@ -32,14 +41,19 @@ int main(int argc, char** argv){
 	affiche_sokoban_jeu(P,argv[3],argv[2],coups_joues);
 	niveau = atof(argv[2]);
 	
-	while(n<50){
+	while(1){
 		P = fait_action(P, &niveau, &coups_joues, argv[3]);
-		sprintf(argv[2],"%d",niveau);		
+		sprintf(argv[2],"%d",niveau);
 		affiche_sokoban_jeu(P,argv[3],argv[2],coups_joues);
 		sleep(1);
-		n++;
+		if(niveau_fini(P)){
+			niveau++;
+			sprintf(argv[2],"%d",niveau);
+			P = init_plateau(P);
+			P = lecture_fichier(P,argv[3],argv[2]);
+			affiche_sokoban_jeu(P,argv[3],argv[2],coups_joues);
+			}
 		}
-	printf("%d\n",n);
 	wait_escape();
 	exit(0);
 	}

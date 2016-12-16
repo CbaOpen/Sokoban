@@ -135,7 +135,7 @@ int gestion_clic(POINT p, int *niveau){
 	}
 
 PLATEAU gestion_action_bouton(PLATEAU P, int bouton, int *niveau, char* str){
-	char str_niv[3];
+	char str_niv[10];
 	sprintf(str_niv,"%d",*niveau);
 	printf("%s\n",str_niv);
 	
