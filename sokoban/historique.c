@@ -2,7 +2,7 @@
 //gestion de l'historique qui fonctionnera avec une pile
 
 #include <uvsqgraphics.h>
-#include "contantes.h"
+#include "constantes.h"
 #include "historique.h"
 
 PILE creer_pile(){
@@ -14,7 +14,7 @@ PILE creer_pile(){
 void empiler(PILE *pile, struct personnage p, int caisse_dep, int direction){
 	Element *nouveau = malloc(sizeof(Element));
 	if (pile == NULL || nouveau == NULL) {
-		printf("probleme d'allocation memoire ou le pointeur H pointe vers NULL au lieu d'une struct historique");
+		printf("probleme d'allocation memoire ou le pointeur pile pointe vers NULL au lieu d'une struct pile");
 		exit(EXIT_FAILURE);
 		}
 	
@@ -29,8 +29,8 @@ void empiler(PILE *pile, struct personnage p, int caisse_dep, int direction){
 //avant d'appeler fonction, faire test de pile->suiv == NULL
 HISTORIQUE depiler(PILE *pile){
 	
-	if (H == NULL) {
-		printf("le pointeur H pointe vers NULL au lieu d'une struct historique");
+	if (pile == NULL) {
+		printf("le pointeur pile pointe vers NULL au lieu d'une struct pile");
 		exit(EXIT_FAILURE);
 		}
 	
@@ -44,4 +44,58 @@ HISTORIQUE depiler(PILE *pile){
 	free(elt_depile);
 		
 	return H;
+	}
+
+void initialisation (PILE *pile){
+	if (pile == NULL) {
+		printf("le pointeur pile pointe vers NULL au lieu d'une struct pile");
+		exit(EXIT_FAILURE);
+		}
+	
+	while(pile->premier != NULL){
+		depiler(pile);
+		}
+	}
+	
+//fonction undo
+//depile la pile undo et empile ce qui a été dépilé dans la pile redo
+//si le déplacement indique un deplacement vers le haut, alors le perso se déplace d'une case vers le bas, idem pour les autres déplacements
+//s'il y a eu une caisse de déplacé, alors la case du perso prend le mode caisse et le perso recule
+PLATEAU fct_undo(PILE *pileU,PILE *pileR, PLATEAU P){
+	HISTORIQUE H;
+		H = depiler(pileU);
+		empiler(pileR,H.perso,H.caisse,H.direction);
+		
+		P.la_case[P.perso.x][P.perso.y].mode = VIDE;
+		if(H.direction == FLECHE_HAUT){
+			if (H.caisse != 0){
+				P.la_case[P.perso.x][P.perso.y].mode = CAISSE;
+				P.la_case[P.perso.x][P.perso.y+1].mode = VIDE;
+				}
+			P.perso.y = H.perso.y-1;
+			}
+		if(H.direction == FLECHE_BAS){
+			if (H.caisse != 0){
+				P.la_case[P.perso.x][P.perso.y].mode = CAISSE;
+				P.la_case[P.perso.x][P.perso.y-1].mode = VIDE;
+				}
+			P.perso.y = H.perso.y+1;
+			}
+		if(H.direction == FLECHE_GAUCHE){
+			if (H.caisse != 0){
+				P.la_case[P.perso.x][P.perso.y].mode = CAISSE;
+				P.la_case[P.perso.x-1][P.perso.y].mode = VIDE;
+				}
+			P.perso.x = H.perso.x+1;
+			}
+		
+		if(H.direction == FLECHE_DROIT){
+			if (H.caisse != 0){
+				P.la_case[P.perso.x][P.perso.y].mode = CAISSE;
+				P.la_case[P.perso.x+1][P.perso.y].mode = VIDE;
+				}
+			P.perso.x = H.perso.x-1;
+			}
+		P.la_case[P.perso.x][P.perso.y].mode = PERSO;
+		return P;
 	}

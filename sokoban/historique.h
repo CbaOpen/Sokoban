@@ -1,7 +1,7 @@
 //BASKEVITCH Claire 21500568
 //gestion de l'historique qui fonctionera avec une pile
 
-#include "contantes.h"
+#include "constantes.h"
 
 #ifndef __HISTORIQUE_H
 #define __HISTORIQUE_H
@@ -10,11 +10,11 @@
 
 struct historique{
 	int caisse; //vaut 0 si aucune caisse déplacé dans le déplacement suivant vaut 1 si une caisse est déplacé
-	int direction; //direction de déplacement pour la caisse (contantes de uvsq graphics), vaut 0 si aucune caisse deplacée
+	int direction; //direction de déplacement (contantes de uvsq graphics)
 	struct personnage perso; //coordonnées du personnage
 	};
 	
-typedef historique HISTORIQUE;
+typedef struct historique HISTORIQUE;
 
 struct element{
 	HISTORIQUE histo;
@@ -34,5 +34,9 @@ PILE creer_pile();
 void empiler(PILE *pile, struct personnage p, int caisse_dep, int direction);
 
 HISTORIQUE depiler(PILE *pile);
+
+void initialisation (PILE *pile);
+
+PLATEAU fct_undo(PILE *pileU,PILE *pileR, PLATEAU P);
 
 #endif

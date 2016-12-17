@@ -9,6 +9,7 @@
 #include "constantes.h"
 #include "lecture.h"
 #include "interface.h"
+#include "historique.h"
 #include "jouer.h"
 
 //calcul le nombre total de niveau dans un fichier
@@ -51,8 +52,12 @@ int main(int argc, char** argv){
 	
 	PLATEAU P;
 	INFO I;
+	PILE pileU,pileR;
 	
 	//initialisation du jeu
+	pileU=creer_pile();
+	pileR=creer_pile();
+	
 	init_affichage();
 	P = init_plateau(P);
 	P = lecture_fichier(P,argv[3],argv[2]);
@@ -66,12 +71,14 @@ int main(int argc, char** argv){
 	while(1){
 		affiche_sokoban_jeu(P,&I);
 		sleep(1);
-		P = fait_action(P, &I);
+		P = fait_action(P, &I, &pileU, &pileR);
 		
 		
 		if(niveau_fini(P)){
 			I.niveau +=1;
 			sprintf(argv[2],"%d",I.niveau);
+			initialisation(&pileU);
+			initialisation(&pileR);
 			P = init_plateau(P);
 			P = lecture_fichier(P,I.nom_fic,argv[2]);
 			}

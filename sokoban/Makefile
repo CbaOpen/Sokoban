@@ -11,8 +11,8 @@ test: compil
 compil: sokoban
 	
 
-sokoban: sokoban.o lecture.o interface.o jouer.o
-	gcc -o sokoban sokoban.o lecture.o interface.o jouer.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
+sokoban: sokoban.o lecture.o interface.o historique.o jouer.o
+	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
 
 sokoban.o: sokoban.c constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` sokoban.c
@@ -22,6 +22,9 @@ lecture.o: lecture.c constantes.h
 
 interface.o: interface.c interface.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` interface.c
+
+historique.o: historique.c historique.h constantes.h
+	gcc $(CFLAGS) `sdl-config --cflags` historique.c
 
 jouer.o: jouer.c jouer.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` jouer.c
