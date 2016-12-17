@@ -56,9 +56,9 @@ PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
 		exit(EXIT_FAILURE);
 		}
 	
-	while(strcmp(c,niveau) != 0){ //tant que le curseur n'est pas arrivé au niveau entré en argument
-		fscanf(fic,"%s",&c);  //utilisation de strcmp pour comparer des chaines de caractères
-		} 
+	do{ //tant que le curseur n'est pas arrivé au niveau entré en argument
+		fscanf(fic,"%s",&c); 
+		}while(strcmp(c,niveau) != 0); 
 		
 	caractere = fgetc(fic);
 	while((caractere != ';') && (caractere !=EOF) && (y>=0)){ //tant que le curseur n'est pas arrivé à la fin du fichier ou d'un ";"
