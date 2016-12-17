@@ -99,3 +99,28 @@ PLATEAU fct_undo(PILE *pileU,PILE *pileR, PLATEAU P){
 		P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 		return P;
 	}
+
+//fonction redo
+//depile la pile redo et empile ce qui a été dépilé dans la pile undo
+//les nouvelles coordonnées du presonnage sont celles indiquées dans l'historique
+//s'il y a eu une caisse de déplacé, en fonction de la direction, les modes des caises sont changés
+
+PLATEAU fct_redo(PILE *pileU,PILE *pileR, PLATEAU P){
+	HISTORIQUE H;
+		H = depiler(pileR);
+		empiler(pileU,H.perso,H.caisse,H.direction);
+		
+		P.la_case[P.perso.x][P.perso.y].mode = VIDE;
+		P.perso.x = H.perso.x;
+		P.perso.y = H.perso.y;
+		
+		if(H.caisse != 0){
+			if (H.direction == FLECHE_HAUT)	P.la_case[P.perso.x][P.perso.y+1].mode = CAISSE;
+			if(H.direction == FLECHE_BAS) P.la_case[P.perso.x][P.perso.y-1].mode = CAISSE;
+			if(H.direction == FLECHE_GAUCHE) P.la_case[P.perso.x-1][P.perso.y].mode = CAISSE;
+			if(H.direction == FLECHE_DROIT) P.la_case[P.perso.x+1][P.perso.y].mode = CAISSE;
+			}
+		
+		P.la_case[P.perso.x][P.perso.y].mode = PERSO;
+		return P;
+	}

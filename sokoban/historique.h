@@ -39,4 +39,6 @@ void initialisation (PILE *pile);
 
 PLATEAU fct_undo(PILE *pileU,PILE *pileR, PLATEAU P);
 
+PLATEAU fct_redo(PILE *pileU,PILE *pileR, PLATEAU P);
+
 #endif

@@ -22,9 +22,11 @@ int test(PLATEAU P,int x, int y){ //x et y sont des variables qui correspondent 
 	}
 
 //déplace le personnage et renvoie le nouveau plateau
-//gère cas par cas les déplacements vers le haut, le bas, la droite, la gauche
-PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU){
+//gère cas par cas les déplacements vers le haut, le bas, la droite et la gauche
+//rajoute le nouveau déplacement à l'historique
+PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 	int result;
+	initialisation(pileR); //car si on s'est déplacé dans l'historique, lorsque l'on fait un nouveau déplacement, la pile redo doit se vider
 			
 	if (fleche == FLECHE_HAUT){
 		result = test(P,0,1);
@@ -122,7 +124,18 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU){
 
 //renvoi le mode d'action demandé par les touches du clavier
 int gestion_touche(char touche, INFO* I){
-	
+	if (touche == 'U') return UNDO;
+	if (touche == 'R') return REDO;
+	if (touche == 'I') return INIT;
+	if ((touche == 'P') && (I->niveau>1)){
+		I->niveau = I->niveau - 1;
+		return PRECEDENT;
+		}
+	if ((touche == 'S') && (I->niveau < I->nb_niv)){
+		I->niveau = I->niveau + 1;
+		return SUIVANT;
+		}
+	if (touche == 'Q') return QUITTER;
 	return DEFAUT;
 	}
 
@@ -168,21 +181,7 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I, PILE *pileU, PILE 
 		}
 		
 	if (bouton == REDO && (pileR->premier != NULL)){
-		HISTORIQUE H;
-		
-		H = depiler(pileR);
-		empiler(pileU,H.perso,H.caisse,H.direction);
-		
-		P.la_case[P.perso.x][P.perso.y].mode = VIDE;
-		P.perso = H.perso;
-		P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-		if (H.caisse != 0){
-			if(H.direction == FLECHE_HAUT) P.la_case[P.perso.x][P.perso.y+1].mode = CAISSE;
-			if(H.direction == FLECHE_BAS)P.la_case[P.perso.x][P.perso.y-1].mode = CAISSE;
-			if(H.direction == FLECHE_GAUCHE)P.la_case[P.perso.x-1][P.perso.y].mode = CAISSE;
-			if(H.direction == FLECHE_DROITE)P.la_case[P.perso.x+1][P.perso.y].mode = CAISSE;
-			}
-		
+		P = fct_redo(pileU,pileR, P);	
 		return P;
 		}
 		
@@ -216,7 +215,7 @@ PLATEAU fait_action(PLATEAU P, INFO* I, PILE *pileU, PILE *pileR){
 	event = wait_key_arrow_clic(&touche,&fleche,&p);
 	
 	if (event == EST_FLECHE) {
-		P = deplacer_perso(P,fleche, I, pileU);
+		P = deplacer_perso(P,fleche, I, pileU, pileR);
 		return P;
 		}
 	if (event == EST_TOUCHE) bouton = gestion_touche(touche, I);
