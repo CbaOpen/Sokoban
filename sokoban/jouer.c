@@ -36,7 +36,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.y +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			empiler(pileU,P.perso,0,FLECHE_HAUT);
+			empiler(pileU,P.perso,0,FLECHE_HAUT,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -45,7 +45,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.perso.y +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x][P.perso.y+1].mode = CAISSE;
-			empiler(pileU,P.perso,1,FLECHE_HAUT);
+			empiler(pileU,P.perso,1,FLECHE_HAUT,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -59,7 +59,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.y -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			empiler(pileU,P.perso,0,FLECHE_BAS);
+			empiler(pileU,P.perso,0,FLECHE_BAS,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -68,7 +68,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.perso.y -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x][P.perso.y-1].mode = CAISSE;
-			empiler(pileU,P.perso,1,FLECHE_BAS);
+			empiler(pileU,P.perso,1,FLECHE_BAS,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -82,7 +82,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.x -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			empiler(pileU,P.perso,0,FLECHE_GAUCHE);
+			empiler(pileU,P.perso,0,FLECHE_GAUCHE,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -91,7 +91,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.perso.x -=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x-1][P.perso.y].mode = CAISSE;
-			empiler(pileU,P.perso,1,FLECHE_GAUCHE);
+			empiler(pileU,P.perso,1,FLECHE_GAUCHE,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -105,7 +105,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.la_case[P.perso.x][P.perso.y].mode = VIDE;
 			P.perso.x +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
-			empiler(pileU,P.perso,0,FLECHE_DROIT);
+			empiler(pileU,P.perso,0,FLECHE_DROIT,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -114,7 +114,7 @@ PLATEAU deplacer_perso(PLATEAU P, int fleche, INFO* I,PILE *pileU,PILE *pileR){
 			P.perso.x +=1;
 			P.la_case[P.perso.x][P.perso.y].mode = PERSO;
 			P.la_case[P.perso.x+1][P.perso.y].mode = CAISSE;
-			empiler(pileU,P.perso,1,FLECHE_DROITE);
+			empiler(pileU,P.perso,1,FLECHE_DROITE,0);
 			I->coups_joues += 1;
 			return P;
 			}
@@ -172,6 +172,8 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I, PILE *pileU, PILE 
 	if (bouton == QUITTER) {
 		initialisation(pileU);
 		initialisation(pileR);
+		free(pileU->premier);
+		free(pileR->premier);
 		exit(0);
 		}
 		
@@ -186,8 +188,9 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I, PILE *pileU, PILE 
 		}
 		
 	if (bouton == INIT){
+		empiler_historique_init(pileU);
 		sprintf(str_niv,"%d",I->niveau);
-		printf("%s\n",str_niv); //bug étrange qui n'apparait pas quand il y a le printf (explication du bug dans le rapport)
+		//printf("%s\n",str_niv); //bug étrange qui n'apparait pas quand il y a le printf (explication du bug dans le rapport)
 		P = init_plateau(P);
 		P = lecture_fichier(P, I->nom_fic, str_niv);
 		return P;
