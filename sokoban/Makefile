@@ -8,11 +8,14 @@ jouer: compil
 test: compil
 	./sokoban -n 40 sasquatch1.xsb
 
+editeur: compil
+	./sokoban -c niveau.xsb
+
 compil: sokoban
 	
 
-sokoban: sokoban.o lecture.o interface.o historique.o jouer.o
-	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
+sokoban: sokoban.o lecture.o interface.o historique.o jouer.o editeur.o
+	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
 
 sokoban.o: sokoban.c constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` sokoban.c
@@ -28,6 +31,9 @@ historique.o: historique.c historique.h constantes.h
 
 jouer.o: jouer.c jouer.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` jouer.c
+
+editeur.o: editeur.c editeur.h constantes.h
+	gcc $(CFLAGS) `sdl-config --cflags` editeur.c
 
 clean:
 	rm -f sokoban

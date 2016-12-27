@@ -8,4 +8,4 @@ void init_affichage();
 
 void affiche_sokoban_jeu(PLATEAU P,INFO* I);
 
-void affiche_sokoban_editeur(PLATEAU P);
+void affiche_sokoban_editeur(PLATEAU P,char* str, int mode_action);

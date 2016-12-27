@@ -69,20 +69,22 @@ void affiche_plateau(PLATEAU P){
 	}
 
 //fonction qui affiche un des boutons redo,undo, etc. 
-void affiche_un_bouton(int x, char *texte){
+//la_selection vaut ou 1 selon le mode qu'on utilise dans l'éditeur
+//utile seulement dans la partie éditeur, vaut toujours 0 dans la partie jouer
+void affiche_un_bouton(int x, char *texte, int la_selection){
 	POINT bg,hd,centre;
+	COULEUR coul_texte = la_selection*noir + (1 - la_selection)*rouge;
 	
 	bg.x = x*LARG_BOUTON; bg.y = HAUT_FENETRE - HAUT_BOUTON;
 	hd.x = bg.x + LARG_BOUTON; hd.y = HAUT_FENETRE;
 	centre.x = bg.x + LARG_BOUTON/2; centre.y = HAUT_FENETRE - HAUT_BOUTON/2;
 	
-	draw_fill_rectangle(bg,hd,antiquewhite);
 	draw_rectangle(bg,hd,noir);
-	aff_pol_centre(texte,TAILLE_POLICE,centre,rouge);
+	aff_pol_centre(texte,TAILLE_POLICE,centre,coul_texte);
 	}
 
 //affiche les informations sur nom du fichier, niveau, et nombre de coups joués
-void affiche_info(char *nom_fichier,char *niveau, int coups_joues){
+void affiche_info_jeu(char *nom_fichier,char *niveau, int coups_joues){
 	POINT bg,hd,centre;
 	
 	bg.x = 0; bg.y = HAUT_FENETRE - 2*HAUT_BOUTON;
@@ -109,25 +111,47 @@ void affiche_info(char *nom_fichier,char *niveau, int coups_joues){
 
 //afficher les 6 boutons de l'interface de jeu
 void affiche_les_boutons_jeu(){
-	affiche_un_bouton(0,"UNDO");
-	affiche_un_bouton(1,"REDO");
-	affiche_un_bouton(2,"INITIALISER");
-	affiche_un_bouton(3,"PRECEDENT");
-	affiche_un_bouton(4,"SUIVANT");
-	affiche_un_bouton(5,"QUITTER");
+	POINT bg,hd;
+	
+	bg.x = 0; bg.y = HAUT_FENETRE - HAUT_BOUTON;
+	hd.x = LARG_FENETRE; hd.y = HAUT_FENETRE;
+	draw_fill_rectangle(bg,hd,antiquewhite);
+	
+	affiche_un_bouton(0,"UNDO",0);
+	affiche_un_bouton(1,"REDO",0);
+	affiche_un_bouton(2,"INITIALISER",0);
+	affiche_un_bouton(3,"PRECEDENT",0);
+	affiche_un_bouton(4,"SUIVANT",0);
+	affiche_un_bouton(5,"QUITTER",0);
 	}
 
-//affiche le bouton enregistrer du mode editeur de niveau
-void affiche_les_boutons_editeur(){
-	POINT bg,hd,centre;
+void affiche_info_editeur(char* str){
+	POINT centre,hd,bg;
 	
 	bg.x = 0; bg.y = HAUT_FENETRE - 2*HAUT_BOUTON;
-	hd.x = LARG_FENETRE; hd.y = HAUT_FENETRE;
-	centre.x = bg.x + LARG_FENETRE/2; centre.y = HAUT_FENETRE - HAUT_BOUTON;
+	hd.x = LARG_FENETRE; hd.y = HAUT_FENETRE - HAUT_BOUTON;
+	centre.x = LARG_FENETRE/2;
+	centre.y = HAUT_FENETRE-(3*HAUT_BOUTON/2);
 	
-	draw_fill_rectangle(bg,hd,rouge);
+	draw_fill_rectangle(bg,hd,antiquewhite);
 	draw_rectangle(bg,hd,noir);
-	aff_pol_centre("ENREGISTRER",TAILLE_POLICE,centre,noir);
+	aff_pol_centre(str,TAILLE_POLICE,centre,noir);
+	}
+	
+//affiche le bouton enregistrer du mode editeur de niveau
+void affiche_les_boutons_editeur(int mode_action){
+	POINT bg,hd;
+	
+	bg.x = 0; bg.y = HAUT_FENETRE - HAUT_BOUTON;
+	hd.x = LARG_FENETRE; hd.y = HAUT_FENETRE;
+	draw_fill_rectangle(bg,hd,antiquewhite);
+	
+	affiche_un_bouton(0,"PLACER",mode_action==PLACER);
+	affiche_un_bouton(1,"BOUGER",mode_action==BOUGER);
+	affiche_un_bouton(2,"BOUGER HASARD",mode_action==BOUGER_HASARD);
+	affiche_un_bouton(3,"ENREGISTRER",mode_action==ENREGISTRER);
+	affiche_un_bouton(4,"QUITTER",mode_action==QUITTER);
+	
 	}
 	
 //affiche le plateau de jeu quand on joue
@@ -138,14 +162,15 @@ void affiche_sokoban_jeu(PLATEAU P,INFO* I){
 	fill_screen(COUL_VIDE);
 	affiche_plateau(P);
 	affiche_les_boutons_jeu();
-	affiche_info(I->nom_fic,niv,I->coups_joues);
+	affiche_info_jeu(I->nom_fic,niv,I->coups_joues);
 	affiche_all();
 	}
 
 //affiche le plateau de jeu quand on est en mode edition
-void affiche_sokoban_editeur(PLATEAU P){
+void affiche_sokoban_editeur(PLATEAU P, char* str, int mode_action){
 	fill_screen(COUL_VIDE);
 	affiche_plateau(P);
-	affiche_les_boutons_editeur();
+	affiche_les_boutons_editeur(mode_action);
+	affiche_info_editeur(str);
 	affiche_all();
 	}

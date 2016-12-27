@@ -29,9 +29,10 @@ typedef struct plateau PLATEAU;
 
 //mode d'une case
 #define VIDE 0
-#define CAISSE 1
-#define PERSO 2
-#define MUR 3
+#define MUR 1
+#define CAISSE 2
+#define PERSO 3
+
 
 //etat d'une case
 #define RIEN 0
@@ -45,6 +46,12 @@ typedef struct plateau PLATEAU;
 #define PRECEDENT 4
 #define SUIVANT 5
 #define QUITTER 6
+
+//mode d'action en plus pour l'editeur
+#define PLACER 7
+#define BOUGER 8
+#define BOUGER_HASARD 9
+#define ENREGISTRER 10
 
 //constantes liées à l'affichage
 #define TAILLE_CASE 40

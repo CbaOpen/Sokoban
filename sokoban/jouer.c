@@ -190,7 +190,6 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I, PILE *pileU, PILE 
 	if (bouton == INIT){
 		empiler_historique_init(pileU);
 		sprintf(str_niv,"%d",I->niveau);
-		//printf("%s\n",str_niv); //bug étrange qui n'apparait pas quand il y a le printf (explication du bug dans le rapport)
 		P = init_plateau(P);
 		P = lecture_fichier(P, I->nom_fic, str_niv);
 		return P;
