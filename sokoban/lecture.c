@@ -11,12 +11,14 @@
 PLATEAU init_plateau(PLATEAU P){
 	int x,y;
 	
-	for(x=0;x<N;x++){
-		for (y=0;y<N;y++){
+	for(x=0;x<N_LARG;x++){
+		for (y=0;y<N_HAUT;y++){
 			P.la_case[x][y].mode = VIDE;
 			P.la_case[x][y].etat = RIEN;
 			}
 		}
+	P.perso.x = 0;
+	P.perso.y = 0;
 	return P;
 	}
 
@@ -46,8 +48,8 @@ PLATEAU choix_mode_etat(PLATEAU P, int x, int y, char caractere){
 
 //lis le fichier contenant les niveaux et initialise le plateau du jeu
 PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
-	int x=0,y=N; //commence lecture en haut à gauche du plateau
-	char c[N];
+	int x=0,y=N_HAUT; //commence lecture en haut à gauche du plateau
+	char c[N_LARG];
 	int caractere=0;
 	
 	FILE* fic = fopen(str,"r");
@@ -65,7 +67,7 @@ PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
 		caractere = fgetc(fic);
 		P = choix_mode_etat(P,x,y,caractere);		
 		x++;
-		if (caractere == '\n' || !(x<N)) { //si retour à la ligne ou x dépasse N (valeur max du tableau)
+		if (caractere == '\n' || !(x<N_LARG)) { //si retour à la ligne ou x dépasse N (valeur max du tableau)
 			y--;						//passe à la ligne en dessous et remet x à gauche
 			x=0;
 			}

@@ -58,8 +58,8 @@ void affiche_rangement(int x,int y){
 void affiche_plateau(PLATEAU P){
 	int x,y;
 	
-	for (x=0; x<N; x++){
-		for (y=0 ; y<N ; y++){
+	for (x=0; x<N_LARG; x++){
+		for (y=0 ; y<N_HAUT ; y++){
 			if (P.la_case[x][y].mode == MUR) affiche_mur(x,y);
 			if (P.la_case[x][y].etat == RANGEMENT) affiche_rangement(x,y);
 			if (P.la_case[x][y].mode == CAISSE) affiche_caisse(x,y,P.la_case[x][y].etat);
@@ -89,23 +89,23 @@ void affiche_info_jeu(char *nom_fichier,char *niveau, int coups_joues){
 	
 	bg.x = 0; bg.y = HAUT_FENETRE - 2*HAUT_BOUTON;
 	hd.x = LARG_FENETRE; hd.y = HAUT_FENETRE - HAUT_BOUTON;
-	centre.x =3*N; centre.y = hd.y - HAUT_BOUTON/2;
+	centre.x =3*N_LARG; centre.y = hd.y - HAUT_BOUTON/2;
 	
 	draw_fill_rectangle(bg,hd,antiquewhite);
 	draw_rectangle(bg,hd,noir);
 	
 	aff_pol_centre("fichier:",TAILLE_POLICE,centre,noir);
-	centre.x =centre.x + 5*N;
+	centre.x =centre.x + 5*N_LARG;
 	aff_pol_centre(nom_fichier,TAILLE_POLICE,centre,noir);
 	
 	centre.x = centre.x + LARGEUR_FENETRE/4;
 	aff_pol_centre("niveau:",TAILLE_POLICE,centre,noir);
-	centre.x =centre.x + 3*N;
+	centre.x =centre.x + 3*N_LARG;
 	aff_pol_centre(niveau,TAILLE_POLICE,centre,noir);
 	
 	centre.x = centre.x + LARGEUR_FENETRE/4;
 	aff_pol_centre("coups joues:",TAILLE_POLICE,centre,noir);
-	centre.x =centre.x + 3*N; centre.y = centre.y + HAUT_BOUTON/3;
+	centre.x =centre.x + 3*N_LARG; centre.y = centre.y + HAUT_BOUTON/3;
 	aff_int(coups_joues,TAILLE_POLICE,centre,noir);
 	} 
 

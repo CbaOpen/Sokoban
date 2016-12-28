@@ -35,8 +35,8 @@ int nb_niv_total(char* str){
 int niveau_fini(PLATEAU P){
 	int x,y;
 	
-	for(x = 0; x <N; x++){
-		for(y = 0; y<N;y++){
+	for(x = 0; x <N_LARG; x++){
+		for(y = 0; y<N_HAUT;y++){
 			if ((P.la_case[x][y].etat == RANGEMENT) && (P.la_case[x][y].mode != CAISSE)) return 0;
 			}
 		}

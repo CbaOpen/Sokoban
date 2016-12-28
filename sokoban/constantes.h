@@ -5,7 +5,8 @@
 #define __CONSTANTE_H
 
 //taille du plateau
-#define N 32
+#define N_LARG 32
+#define N_HAUT 20
 
 //structure du plateau
 	//structure d'une case
@@ -20,7 +21,7 @@
 		};
 	
 struct plateau {
-	struct une_case la_case[N][N];
+	struct une_case la_case[N_LARG][N_HAUT];
 	struct personnage perso;
 	};
 
@@ -53,12 +54,18 @@ typedef struct plateau PLATEAU;
 #define BOUGER_HASARD 9
 #define ENREGISTRER 10
 
+//constantes liées à la selection d'une caisse lors de l'édition d'un niveau
+#define SELECT_DROITE 1
+#define SELECT_GAUCHE -1
+#define SELECT_HAUT 2
+#define SELECT_BAS -2
+
 //constantes liées à l'affichage
 #define TAILLE_CASE 40
-#define LARG_BOUTON ((N*TAILLE_CASE)/6)
+#define LARG_BOUTON ((N_LARG*TAILLE_CASE)/6)
 #define HAUT_BOUTON (TAILLE_CASE)
-#define LARG_FENETRE (N*TAILLE_CASE)
-#define HAUT_FENETRE (N*TAILLE_CASE + 2*HAUT_BOUTON)
+#define LARG_FENETRE (N_LARG*TAILLE_CASE)
+#define HAUT_FENETRE (N_HAUT*TAILLE_CASE + 2*HAUT_BOUTON)
 #define TAILLE_POLICE 20
 
 //les différentes couleures
