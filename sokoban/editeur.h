@@ -3,4 +3,5 @@
 
 #include "constantes.h"
 
-PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str);
+PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement);
+

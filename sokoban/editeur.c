@@ -4,7 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <uvsqgraphics.h>
+#include <math.h>
 #include "editeur.h"
+#include "editeur_action.h"
 #include "constantes.h"
 #include "interface.h"
 
@@ -62,71 +64,32 @@ PLATEAU placer_objet(PLATEAU P, POINT a){
 	P.la_case[x][y].mode = (P.la_case[x][y].mode + 1)%4;
 	P.la_case[x][y].etat = RIEN;
 	if (P.la_case[x][y].mode == CAISSE) P.la_case[x][y].etat = RANGEMENT;
-	if (P.la_case[x][y].mode == PERSO) { P.perso.x = x; P.perso.y = y; }
 	return P;
 	}
 
-////test si la case adjacente à laquelle on veut aller est un mur ou une caisse
-int test2(PLATEAU P,int x, int y){ //x et y sont des variables qui correspondent au déplacement du perso (x pour les déplacement gauche-droite, y pour haut-bas)
-	if (P.la_case[P.perso.x+x][P.perso.y+y].mode == MUR) return FALSE;
-	if (P.la_case[P.perso.x+x][P.perso.y+y].mode == CAISSE) return FALSE;
-	if (P.perso.x+x<0 || P.perso.x+x>N_LARG-1 || P.perso.y+y<0 || P.perso.y+y>N_HAUT-1) return FALSE;
-	return TRUE;
-	}
-
-PLATEAU deplacer(PLATEAU P, int x, int y){
-	P.la_case[P.perso.x][P.perso.y].mode = VIDE; 
-	P.la_case[P.perso.x+x][P.perso.y+y].mode = PERSO;
-	P.perso.x += x;
-	P.perso.y += y;
-	return P;
-	}
-
-PLATEAU deplacer_normal(PLATEAU P, int fleche){
-	if (fleche == FLECHE_HAUT){
-			if (test2(P,0,1) == TRUE) P = deplacer(P,0,1);
-			return P;
-			}
-		if (fleche == FLECHE_BAS){
-			if (test2(P,0,-1) == TRUE) P = deplacer(P,0,-1);
-			return P;
-			}
-		if (fleche == FLECHE_GAUCHE){
-			if (test2(P,-1,0) == TRUE) P = deplacer(P,-1,0);
-			return P;
-			}
-		if (fleche == FLECHE_DROITE){
-			if (test2(P,1,0) == TRUE) P = deplacer(P,1,0);
-			}
-		return P;
-	}
-
-PLATEAU deplacer_perso_editeur(PLATEAU P, int fleche, int caisse_select){
-	//int result;
+//fonction pour sélectionner une caisse
+//vérifie que la case cliquée est bien une caisse et est adjacente au personnage
+//2 cas: soit la caisse n'était pas sélectionnée et la sélectionne soit la caisse était sélectionnée et la déselctionne
+int select_caisse(PLATEAU P, POINT p, int caisse_select, int *nb_deplacement){
+	int x,y;
+	x = p.x/TAILLE_CASE;
+	y = p.y/TAILLE_CASE;
 	
-	if (caisse_select == 0){
-		P = deplacer_normal(P,fleche);
-		}
-	else {
-		
-		}
-	return P;
-	}
-
-PLATEAU deplacer_hasard(PLATEAU P){
-	//a finir
-	return P;
-	}
-
-int select_caisse(PLATEAU P, POINT p, int caisse_select){
+	if (P.la_case[x][y].mode != CAISSE || (fabs(P.perso.x-x) != 1 && fabs(P.perso.y-y) != 1) || (fabs(P.perso.x-x) == fabs(P.perso.y-y))) return caisse_select;
+	*nb_deplacement = 0;
 	if (caisse_select != 0){
-		// a finir
+		if (P.perso.x-x == -1 && caisse_select == SELECT_DROITE)  return 0;
+		if (P.perso.x-x == 1 && caisse_select == SELECT_GAUCHE) return 0;
+		if (P.perso.y-y == 1 && caisse_select == SELECT_BAS)     return 0;
+		if (P.perso.y-y == -1 && caisse_select == SELECT_HAUT)   return 0;
 		}
 	else {
+		if (P.perso.x-x == 1)  return SELECT_GAUCHE;
+		if (P.perso.x-x == -1) return SELECT_DROITE;
+		if (P.perso.y-y == 1)  return SELECT_BAS;
 		
 		}
-	
-	return caisse_select;
+	return SELECT_HAUT;
 	}
 
 //test s'il y a un seul personnage sur le plateau
@@ -141,12 +104,22 @@ int test_un_perso(PLATEAU P){
 	return FALSE;
 	}
 
+PLATEAU trouver_perso(PLATEAU P){
+	int x,y;
+	
+	for(x=0;x<N_LARG;x++){
+		for(y=0;y<N_HAUT;y++) { 
+			if(P.la_case[x][y].mode == PERSO) { P.perso.x = x; P.perso.y = y; return P;}
+			}
+		}
+	}
+
 //associe les clics aux actions correspondantes	
-PLATEAU gestion_clic_editeur(PLATEAU P,POINT p,int *mode_action, int *caisse_select){
+PLATEAU gestion_clic_editeur(PLATEAU P,POINT p,int *mode_action, int *caisse_select,int *nb_deplacement){
 	if (p.y>= (HAUT_FENETRE - HAUT_BOUTON)) changer_mode_action(p, mode_action);
 	else{
 		if (*mode_action == PLACER) P = placer_objet(P,p);
-		if (*mode_action == BOUGER) *caisse_select = select_caisse(P,p,*caisse_select);
+		if (*mode_action == BOUGER) *caisse_select = select_caisse(P,p,*caisse_select,nb_deplacement);
 		} 
 	return P;
 	}
@@ -161,15 +134,18 @@ void gestion_touche_editeur(char touche, int *mode_action){
 	}
 
 //fonction appelé dans le main qui gère les actions faites par le joueur
-PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str){
-	int event=0, fleche=0, caisse_select=0;
+PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement){
+	int event=0, fleche=0;
 	char touche;
 	POINT p; p.x=0; p.y=0;
 	
 	event = wait_key_arrow_clic(&touche, &fleche, &p);
 	
-	if(event == EST_FLECHE && *mode_action == BOUGER) P = deplacer_perso_editeur(P,fleche,caisse_select);
-	if(event == EST_CLIC) P = gestion_clic_editeur(P,p, mode_action, &caisse_select);
+	if(event == EST_FLECHE && *mode_action == BOUGER) { 
+		P = deplacer_perso_editeur(P,fleche,*caisse_select,nb_deplacement); 
+		sleep(1); 
+		}
+	if(event == EST_CLIC) P = gestion_clic_editeur(P,p, mode_action, caisse_select, nb_deplacement);
 	if (event == EST_TOUCHE) gestion_touche_editeur(touche, mode_action);
 	
 	if((*mode_action == BOUGER || *mode_action == BOUGER_HASARD) && test_un_perso(P)!= TRUE){
@@ -177,9 +153,12 @@ PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str){
 		free(*str);
 		*str = strdup("Il faut un personnage");
 		}
-	else if(strcmp(*str,"Que l'inspiration soit avec vous") !=0) {
-		free(*str);
-		*str = strdup("Que l'inspiration soit avec vous");
+	else {
+		P = trouver_perso(P);
+		if(strcmp(*str,"Que l'inspiration soit avec vous") !=0) {
+			free(*str);
+			*str = strdup("Que l'inspiration soit avec vous");
+			}
 		}
 		
 	if (*mode_action == BOUGER_HASARD) P = deplacer_hasard(P);

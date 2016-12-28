@@ -94,14 +94,14 @@ int main(int argc, char** argv){
 			
 		PLATEAU P;
 		char *str=strdup("Que l'inspiration soit avec vous");
-		int mode_action = PLACER;
-		
+		int mode_action = PLACER, caisse_select=0, nb_deplacement=0; //caisse_select dit si une caisse a été selectionnée ou non et nb_deplacement compte le nombre de déplacement effectué dans une direction quand une caisse a été sélectionnée
+																	//utile pour revenir en arrière sans avoir besoin d'un historique
 		init_affichage();
 		P = init_plateau(P);
 		
 		while(1){
 			affiche_sokoban_editeur(P,str,mode_action);
-			P = faire_action_editeur(P,&mode_action,&str);
+			P = faire_action_editeur(P,&mode_action,&str,&caisse_select,&nb_deplacement);
 			}
 		}
 		

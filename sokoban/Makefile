@@ -14,8 +14,8 @@ editeur: compil
 compil: sokoban
 	
 
-sokoban: sokoban.o lecture.o interface.o historique.o jouer.o editeur.o
-	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
+sokoban: sokoban.o lecture.o interface.o historique.o jouer.o editeur_action.o editeur.o
+	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o editeur_action.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
 
 sokoban.o: sokoban.c constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` sokoban.c
@@ -31,6 +31,9 @@ historique.o: historique.c historique.h constantes.h
 
 jouer.o: jouer.c jouer.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` jouer.c
+
+editeur_action.o: editeur_action.c editeur_action.h constantes.h
+	gcc $(CFLAGS) `sdl-config --cflags` editeur_action.c
 
 editeur.o: editeur.c editeur.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` editeur.c
