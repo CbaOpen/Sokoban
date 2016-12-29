@@ -55,12 +55,12 @@ void initialisation (PILE *pile){
 		printf("le pointeur pile pointe vers NULL au lieu d'une struct pile");
 		exit(EXIT_FAILURE);
 		}
-	Element *elt;
+	Element *tmp;
 	
 	while(pile->premier != NULL){
-		elt = pile->premier;
-		pile->premier = elt->suiv;
-		free(elt);
+		tmp = pile->premier;
+		pile->premier = tmp->suiv;
+		free(tmp);
 		
 		}
 	}

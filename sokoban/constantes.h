@@ -60,6 +60,16 @@ typedef struct plateau PLATEAU;
 #define SELECT_HAUT 2
 #define SELECT_BAS -2
 
+//contantes utilisées pendant le test du niveau fermé
+#define HAUT 0
+#define DIAG_HD 1
+#define DROITE 2
+#define DIAG_BD 3
+#define BAS 4
+#define DIAG_BG 5
+#define GAUCHE 6
+#define DIAG_HG 7
+
 //constantes liées à l'affichage
 #define TAILLE_CASE 40
 #define LARG_BOUTON ((N_LARG*TAILLE_CASE)/6)

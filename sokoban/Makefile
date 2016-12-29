@@ -14,14 +14,14 @@ editeur: compil
 compil: sokoban
 	
 
-sokoban: sokoban.o lecture.o interface.o historique.o jouer.o editeur_action.o editeur.o
-	gcc -o sokoban sokoban.o lecture.o interface.o historique.o jouer.o editeur_action.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
+sokoban: sokoban.o lecture_ecriture.o interface.o historique.o jouer.o editeur_action.o editeur.o
+	gcc -o sokoban sokoban.o lecture_ecriture.o interface.o historique.o jouer.o editeur_action.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf
 
 sokoban.o: sokoban.c constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` sokoban.c
 
-lecture.o: lecture.c constantes.h
-	gcc $(CFLAGS) `sdl-config --cflags` lecture.c
+lecture_ecriture.o: lecture_ecriture.c lecture_ecriture.h constantes.h
+	gcc $(CFLAGS) `sdl-config --cflags` lecture_ecriture.c
 
 interface.o: interface.c interface.h constantes.h
 	gcc $(CFLAGS) `sdl-config --cflags` interface.c

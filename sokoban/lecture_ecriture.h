@@ -6,3 +6,9 @@
 PLATEAU init_plateau(PLATEAU P);
 
 PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau);
+
+void ecrire_niveau(PLATEAU P, char *nom_fichier, int niveau);
+
+int nb_niveau(char *nom_fichier);
+
+int nb_niv_total(char* str);

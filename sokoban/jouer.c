@@ -4,7 +4,7 @@
 #include <uvsqgraphics.h>
 #include "constantes.h"
 #include "jouer.h"
-#include "lecture.h"
+#include "lecture_ecriture.h"
 #include "historique.h"
 
 //test si la case adjacente à laquelle on veut aller est un mur ou une caisse
@@ -174,7 +174,7 @@ PLATEAU gestion_action_bouton(PLATEAU P, int bouton, INFO* I, PILE *pileU, PILE 
 		initialisation(pileR);
 		free(pileU->premier);
 		free(pileR->premier);
-		exit(0);
+		exit(EXIT_SUCCESS);
 		}
 		
 	if ((bouton == UNDO) && (pileU->premier != NULL)){

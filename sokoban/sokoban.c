@@ -7,29 +7,11 @@
 #include <unistd.h>
 #include <uvsqgraphics.h>
 #include "constantes.h"
-#include "lecture.h"
+#include "lecture_ecriture.h"
 #include "interface.h"
 #include "historique.h"
 #include "jouer.h"
 #include "editeur.h"
-
-//calcul le nombre total de niveau dans un fichier
-int nb_niv_total(char* str){
-	int nb=0;
-	char c;
-	
-	FILE* fic = fopen(str,"r");
-	if (fic == NULL){
-		fprintf(stderr,"echec ouverture fichier %s\n",str);
-		exit(EXIT_FAILURE);
-		}
-	
-	do{
-		c=fgetc(fic);
-		if(c == ';') nb++;
-		}while(c != EOF);
-	return nb;
-	}
 
 //test d'un niveau fini
 int niveau_fini(PLATEAU P){
@@ -68,6 +50,7 @@ int main(int argc, char** argv){
 		I.nom_fic = argv[3];
 		I.coups_joues = 0;
 		I.nb_niv = nb_niv_total(I.nom_fic);
+		
 	
 		//jeu
 		while(1){
@@ -76,6 +59,13 @@ int main(int argc, char** argv){
 			P = fait_action(P, &I, &pileU, &pileR);
 		
 			if(niveau_fini(P)){
+				if(I.niveau == I.nb_niv) {
+					initialisation(&pileU);
+					initialisation(&pileR);
+					free(pileU.premier);
+					free(pileR.premier);
+					exit(EXIT_SUCCESS);
+					}
 				I.niveau +=1;
 				sprintf(argv[2],"%d",I.niveau);
 				initialisation(&pileU);
@@ -101,7 +91,7 @@ int main(int argc, char** argv){
 		
 		while(1){
 			affiche_sokoban_editeur(P,str,mode_action);
-			P = faire_action_editeur(P,&mode_action,&str,&caisse_select,&nb_deplacement);
+			P = faire_action_editeur(P,&mode_action,&str,&caisse_select,&nb_deplacement, argv[2]);
 			}
 		}
 		

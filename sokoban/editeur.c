@@ -8,45 +8,163 @@
 #include "editeur.h"
 #include "editeur_action.h"
 #include "constantes.h"
-#include "interface.h"
+#include "lecture_ecriture.h"
 
-//fait correspondre chaque etat et mode au symbole correspondant 
-/*char choix_symbole(PLATEAU P,int x, int y){
-	char* c;
+
+
+
+//test s'il y a un seul personnage sur le plateau
+//cette fonction est testée lorsque le joueur choisi le mode bouger ou bouger au hasard
+int test_un_perso(PLATEAU P){
+	int n=0,x,y;
 	
-	if (P.la_case[x][y].mode == MUR) c = "#";
-	if (P.la_case[x][y].etat == RANGEMENT) c = ".";
-	if (P.la_case[x][y].mode == CAISSE) c = "$";
-	if (P.la_case[x][y].mode == PERSO) c = "@";
-	if ((P.la_case[x][y].etat == RANGEMENT) && (P.la_case[x][y].mode == CAISSE)) c = "*";
-	if ((P.la_case[x][y].etat == RANGEMENT) && (P.la_case[x][y].mode == PERSO)) c = "+";
-	return c;
+	for(x=0;x<N_LARG;x++){
+		for(y=0;y<N_HAUT;y++) { if(P.la_case[x][y].mode == PERSO) n++; }
+		}
+	if(n == 1) return TRUE;
+	return FALSE;
 	}
 
-//écris dans le fichier de creation de niveau
-void ecrire_niveau(PLATEAU P, char *nom_fichier, int niveau){
-	char* c;
+PLATEAU trouver_perso(PLATEAU P){
 	int x,y;
-		
-	FILE* fic = fopen(nom_fichier, "w");
-	if (fic==NULL){
-		fprintf(stderr,"echec ouverture fichier %s\n",nom_fichier);
+	
+	for(x=0;x<N_LARG;x++){
+		for(y=0;y<N_HAUT;y++) { 
+			if(P.la_case[x][y].mode == PERSO) { P.perso.x = x; P.perso.y = y; return P;}
+			}
+		}
+	return P;
+	}
+
+/*
+void empiler2(PILE2 *pile, struct personnage coord, int adjacent){
+	ELT *nouveau = malloc(sizeof(ELT));
+	if (pile == NULL || nouveau == NULL){
+		printf("probleme allocation mémoire ou pointeur sur struct pile2");
 		exit(EXIT_FAILURE);
 		}
 	
-	fprintf(fic,"; ");
-	fprintf(fic,"%d\n\n",niveau);
-	
-	for(y=N-1;y>=0;y--){
-		for(x=0;x<N;x++){
-			c = choix_symbole(P,x,y);
-			fprintf(fic,"%s",c);
-			}
-		fprintf(fic,"\n");
+	nouveau->mur.coord.x = coord.x;
+	nouveau->mur.coord.y = coord.y;
+	nouveau->mur.adjacent = adjacent;
+	nouveau->suiv = pile->premier;
+	pile->premier = nouveau;
+	}
+
+Test_mur depiler2(PILE2 *pile){
+	if (pile == NULL) {
+		printf("le pointeur pile pointe vers NULL au lieu d'une struct pile");
+		exit(EXIT_FAILURE);
 		}
-	fprintf(fic,"\n");
-	fclose(fic);
-	}*/
+	
+	Test_mur M;
+	ELT *elt_depile = pile->premier;
+	
+	M.coord.x = elt_depile->mur.coord.x;
+	M.coord.y = elt_depile->mur.coord.y;
+	M.adjacent = elt_depile->mur.adjacent;
+	pile->premier = elt_depile->suiv;
+	free(elt_depile);
+	return M;
+	}
+
+void liberer(PILE2 *pile){
+	if (pile == NULL) {
+		printf("le pointeur pile pointe vers NULL au lieu d'une struct pile");
+		exit(EXIT_FAILURE);
+		}
+	
+	ELT *tmp;
+	while(pile->premier != NULL){
+		tmp = pile->premier;
+		pile->premier = tmp->suiv;
+		free(tmp);
+		}
+	}
+
+
+int test_case_adj(PLATEAU P, struct personnage coord, int adjacent){
+	switch(adjacent){
+		case 0: //adjacent = HAUT
+			if(P.la_case[coord.x][coord.y+1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 1: //adjacent = DIAG_HD
+			if(P.la_case[coord.x+1][coord.y+1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 2: //adjacent = DROITE
+			if(P.la_case[coord.x+1][coord.y].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 3: //adjacent = DIAG_BD
+			if(P.la_case[coord.x+1][coord.y-1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 4: //adjacent = BAS
+			if(P.la_case[coord.x][coord.y-1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 5: //adjacent = DIAG_BG
+			if(P.la_case[coord.x-1][coord.y-1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		case 6: //adjacent = GAUCHE
+			if(P.la_case[coord.x-1][coord.y].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		default: //adjacent = DIAG_HG
+			if(P.la_case[coord.x-1][coord.y+1].mode == MUR) return TRUE;
+			else return FALSE;
+			break;
+		}
+	}
+	
+struct personnage new_coord(struct personnage coord, int adjacent){
+	switch(adjacent){
+		case 0: //adjacent = HAUT
+			coord.y += 1;
+			return coord;
+			break;
+		case 1: //adjacent = DIAG_HD
+			coord.x += 1; coord.y += 1;
+			return coord;
+			break;
+		case 2: //adjacent = DROITE
+			coord.x += 1;
+			return coord;
+			break;
+		case 3: //adjacent = DIAG_BD
+			coord.x += 1; coord.y += -1;
+			return coord;
+			break;
+		case 4: //adjacent = BAS
+			coord.y += -1;
+			return coord;
+			break;
+		case 5: //adjacent = DIAG_BG
+			coord.x += -1; coord.y += -1;
+			return coord;
+			break;
+		case 6: //adjacent = GAUCHE
+			coord.x += -1;
+			return coord;
+			break;
+		default: //adjacent = DIAG_HG
+			coord.x += -1; coord.y += 1;
+			return coord;
+			break;
+		}
+	}
+
+int niveau_ferme(PLATEAU P, PILE2 *pile, struct personnage coord_init, int adj_init){
+	return 1;
+	}
+*/
+int test_niveau_ferme(PLATEAU P){
+	return 1;
+	}
+
 
 void changer_mode_action(POINT p, int* mode_action){
 	if (p.x < 5*LARG_BOUTON) *mode_action = QUITTER;
@@ -92,28 +210,6 @@ int select_caisse(PLATEAU P, POINT p, int caisse_select, int *nb_deplacement){
 	return SELECT_HAUT;
 	}
 
-//test s'il y a un seul personnage sur le plateau
-//cette fonction est testée lorsque le joueur choisi le mode bouger ou bouger au hasard
-int test_un_perso(PLATEAU P){
-	int n=0,x,y;
-	
-	for(x=0;x<N_LARG;x++){
-		for(y=0;y<N_HAUT;y++) { if(P.la_case[x][y].mode == PERSO) n++; }
-		}
-	if(n == 1) return TRUE;
-	return FALSE;
-	}
-
-PLATEAU trouver_perso(PLATEAU P){
-	int x,y;
-	
-	for(x=0;x<N_LARG;x++){
-		for(y=0;y<N_HAUT;y++) { 
-			if(P.la_case[x][y].mode == PERSO) { P.perso.x = x; P.perso.y = y; return P;}
-			}
-		}
-	}
-
 //associe les clics aux actions correspondantes	
 PLATEAU gestion_clic_editeur(PLATEAU P,POINT p,int *mode_action, int *caisse_select,int *nb_deplacement){
 	if (p.y>= (HAUT_FENETRE - HAUT_BOUTON)) changer_mode_action(p, mode_action);
@@ -134,7 +230,7 @@ void gestion_touche_editeur(char touche, int *mode_action){
 	}
 
 //fonction appelé dans le main qui gère les actions faites par le joueur
-PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement){
+PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement, char* nom_fichier){
 	int event=0, fleche=0;
 	char touche;
 	POINT p; p.x=0; p.y=0;
@@ -145,9 +241,10 @@ PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caiss
 		P = deplacer_perso_editeur(P,fleche,*caisse_select,nb_deplacement); 
 		sleep(1); 
 		}
-	if(event == EST_CLIC) P = gestion_clic_editeur(P,p, mode_action, caisse_select, nb_deplacement);
+	if(event == EST_CLIC)    P = gestion_clic_editeur(P,p, mode_action, caisse_select, nb_deplacement);
 	if (event == EST_TOUCHE) gestion_touche_editeur(touche, mode_action);
 	
+		//appelle les fonctions de test niveau fermé et un seul personnage
 	if((*mode_action == BOUGER || *mode_action == BOUGER_HASARD) && test_un_perso(P)!= TRUE){
 		*mode_action = PLACER;
 		free(*str);
@@ -160,10 +257,15 @@ PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caiss
 			*str = strdup("Que l'inspiration soit avec vous");
 			}
 		}
+	if (*mode_action == BOUGER && test_niveau_ferme(P) == 0) {
+		*mode_action = PLACER;
+		free(*str);
+		*str = strdup("niveau pas ferme");
+		}
 		
 	if (*mode_action == BOUGER_HASARD) P = deplacer_hasard(P);
-	if(*mode_action == ENREGISTRER) ;
-	if(*mode_action == QUITTER) { free(*str); exit(0); }
+	if(*mode_action == ENREGISTRER)    { ecrire_niveau(P,nom_fichier,nb_niveau(nom_fichier)); *mode_action = QUITTER; }
+	if(*mode_action == QUITTER)        { free(*str); exit(EXIT_SUCCESS); }
 			
 	return P;
 	}
