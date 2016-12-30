@@ -115,7 +115,7 @@ PLATEAU les_tests(PLATEAU P, char **str, int *mode_action){
 	else {
 		P = trouver_perso(P);
 		}
-	if (*mode_action == BOUGER && test_niveau_ferme(P) == FALSE) {
+	if ((*mode_action == BOUGER || *mode_action == BOUGER_HASARD) && test_niveau_ferme(P) == FALSE) {
 		*mode_action = PLACER;
 		free(*str);
 		*str = strdup("niveau pas ferme");
@@ -162,7 +162,7 @@ int select_caisse(PLATEAU P, POINT p, int caisse_select, int *nb_deplacement){
 PLATEAU changer_mode_action(PLATEAU P, POINT p, int* mode_action, char **str){
 	if (p.x < 5*LARG_BOUTON) *mode_action = QUITTER;
 	if (p.x < 4*LARG_BOUTON) *mode_action = ENREGISTRER;
-	if (p.x < 3*LARG_BOUTON) *mode_action = BOUGER_HASARD;
+	if (p.x < 3*LARG_BOUTON) { *mode_action = BOUGER_HASARD; P = les_tests(P,str, mode_action); }
 	if (p.x < 2*LARG_BOUTON) { *mode_action = BOUGER; P = les_tests(P, str, mode_action); }
 	if (p.x < LARG_BOUTON)   *mode_action = PLACER;
 	return P;
@@ -182,14 +182,14 @@ PLATEAU gestion_clic_editeur(PLATEAU P,char **str, POINT p,int *mode_action, int
 PLATEAU gestion_touche_editeur(PLATEAU P, char touche, int *mode_action, char **str){
 	if (touche == 'P') *mode_action = PLACER;
 	if (touche == 'B') { *mode_action = BOUGER; P = les_tests(P,str, mode_action); }
-	if (touche == 'H') *mode_action = BOUGER_HASARD;
+	if (touche == 'H') { *mode_action = BOUGER_HASARD; P = les_tests(P,str, mode_action); }
 	if (touche == 'E') *mode_action = ENREGISTRER;
 	if (touche == 'Q') *mode_action = QUITTER;
 	}
 
 //fonction appelé dans le main qui gère les actions faites par le joueur
 PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement, char* nom_fichier){
-	int event=0, fleche=0;
+	int event=0, fleche=0,n;
 	char touche;
 	POINT p; p.x=0; p.y=0;
 	
@@ -206,7 +206,7 @@ PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caiss
 		}
 	if(event == EST_CLIC)    		   P = gestion_clic_editeur(P,str, p, mode_action, caisse_select, nb_deplacement);
 	if (event == EST_TOUCHE)           P = gestion_touche_editeur(P, touche, mode_action, str);
-	if (*mode_action == BOUGER_HASARD) P = deplacer_hasard(P);
+	if (*mode_action == BOUGER_HASARD) for(n=0;n<10;n++) P = deplacer_hasard(P);
 	if(*mode_action == ENREGISTRER)    { ecrire_niveau(P,nom_fichier,nb_niveau(nom_fichier)); *mode_action = QUITTER; }
 	if(*mode_action == QUITTER)        { free(*str); exit(EXIT_SUCCESS); }
 			
