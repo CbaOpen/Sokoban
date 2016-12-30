@@ -49,7 +49,7 @@ int main(int argc, char** argv){
 		I.niveau = atof(argv[2]);
 		I.nom_fic = argv[3];
 		I.coups_joues = 0;
-		I.nb_niv = nb_niv_total(I.nom_fic);
+		I.nb_niv = nb_niveau(I.nom_fic)-1;
 		
 	
 		//jeu

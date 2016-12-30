@@ -76,27 +76,8 @@ PLATEAU lecture_fichier(PLATEAU P,char *str,char* niveau){
 	return P;
 	}
 
-//calcul le nombre total de niveau dans un fichier
-//pour les tests de fin de niveau dans le mode jouer
-int nb_niv_total(char* str){
-	int nb=0;
-	char c;
-	
-	FILE* fic = fopen(str,"r");
-	if (fic == NULL){
-		fprintf(stderr,"echec ouverture fichier %s\n",str);
-		exit(EXIT_FAILURE);
-		}
-	
-	do{
-		c=fgetc(fic);
-		if(c == ';') nb++;
-		}while(c != EOF);
-	return nb;
-	}
 
 //calcul le nombre de niveau total et renvoie ce nombre+1
-//sert pour connaitre le nombre du niveau suivant à enregistrer dans le fichier
 int nb_niveau(char *nom_fichier){
 	FILE* fic = fopen(nom_fichier, "r");
 	if (fic==NULL) return 1;
