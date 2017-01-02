@@ -14,8 +14,8 @@
 	\chapter{Les structures}
 - La première structure est celle du plateau:\\
 Elle est définie dans le fichier "constantes.h".
-"struct plateau" est composée de deux autres structures, "struct une case" qui permet d'enregistrer si une case est vide, une caisse, un mur etc et "struct coordonnées" qui dans la structure du plateau sert à avoir les coordonnées du personnage.
-"struct plateau" prend donc en arguments les coordonnées du personnage et un tableau à deux dimmensions de type struct une case et de la taille largeur sur hauteur, définies dans le fichier "contantes.h".
+"struct plateau" est composée de deux autres structures, "struct une\_case" qui permet d'enregistrer si une case est vide, une caisse, un mur etc et "struct coordonnées" qui dans la structure du plateau sert à avoir les coordonnées du personnage.
+"struct plateau" prend donc en arguments les coordonnées du personnage et un tableau à deux dimmensions de type struct une\_case et de la taille largeur sur hauteur, définies dans le fichier "contantes.h".
 
 - La deuxième structure est "struct info":\\
 Elle est définie dans le fichier "jouer.h".
@@ -38,25 +38,25 @@ La fonction de lecture qui permet de charger un niveau lis le fichier jusqu'à a
 La fonction d'écriture va dans un premier temps calculer les bornes du niveau créé pour ne pas recopier l'entièreté du plateau. Une fois les bornes calculées, la fonction fait correspondre chaque mode de case comprise entre les bornes par le carractère correspondant. 
 
 		\section{Les fonctions concernant la jouabilité}
-Une seule fonction est appelée dans le main: "faire action". Elle attend une action de la part du joueur, il peut y en avoir différentes :
+Une seule fonction est appelée dans le main: "faire\_action". Elle attend une action de la part du joueur, il peut y en avoir différentes :
 
 
-La première est un déplacement du personnage. La fonction, appelée "deplacer perso", va dans un permier temps tester si le personnage peut se déplacer dans la direction désirée et si une caisse va être déplacée.
+La première est un déplacement du personnage. La fonction, appelée "deplacer\_perso", va dans un permier temps tester si le personnage peut se déplacer dans la direction désirée et si une caisse va être déplacée.
 Puis dans un second temps, elle va affecter les nouvelles valeurs des cases en fonction du résultat du test. La fonction, un peu longue est découpée en 4 parties correspondant aux quatres directions.
 Les nouvelles affectations différant pour chaque directions, je ne voyais pas comment racourcir cette fonction.
-La fonction qui attend l'action du joueur étant non bloquante, le personnage bougeait beaucoup trop vite pour jouer. J'ai donc mis une fonction sleep dans le code pour ralentir le personnage. Or le dure un peu trop longtemps et le personnage bouge un peu trop lentement. En effet, en dessous d'une seconde, même pour 0,99 secondes, le personnage va trop vite mais à une seconde il est trop lent.
+La fonction qui attend l'action du joueur étant non bloquante, le personnage bougeait beaucoup trop vite pour jouer. J'ai donc ajouté une fonction sleep dans le code pour ralentir le personnage. Or le sleep dure un peu trop longtemps et le personnage bouge un peu trop lentement. En effet, en dessous d'une seconde, même pour 0,99 secondes, le personnageest trop rapide mais à une seconde il est trop lent.
 
 
-La deuxième est un clic de souris et la troisième une touche de clavier préssée en dehors des flèches directionnelles. Ces deux actions appellent deux fonctions différentes mais qui jouent le même rôle: "gestion touche" et "gestion clic". Ces deux fonctions renvoient une demande d'action: undo, redo, niveau précedent ou suivant, initialisation du niveau, quitter ou rien.
-Ensuite, cette demande d'action est analysée et effectiuée par la fonction "gestion action bouton".
+La deuxième est un clic de souris et la troisième une touche de clavier pressée en dehors des flèches directionnelles. Ces deux actions appellent deux fonctions différentes mais qui jouent le même rôle: "gestion\_touche" et "gestion\_clic". Ces deux fonctions renvoient une demande d'action: undo, redo, niveau précedent ou suivant, initialisation du niveau, quitter ou rien.
+Ensuite, cette demande d'action est analysée et effectiuée par la fonction "gestion\_action\_bouton".
 	
 	\chapter{La gestion de l'historique}
 L'historique fonction avec une pile. A chaque déplacement de personnage, le déplacement est empilé dans la pile undo en enregistrant différentes informations, voir le chapitre 1 sur les structures pour plus de détails sur les informations enregistrées.\\
-Si le joueur demande un retour arrière, la pile undo est dépilée de un élément puis cet élément est empilé dans la pile redo et les informations sont affectées au plateau grâce à la fonction "a l'envers".
-De même si le joueur demande l'action redo, la pile redo est dépilée de un élément puis cet élément est empilé dans la pile undo et les informations sont traitées par la fonction " a l'endroit".\\
+Si le joueur demande un retour arrière, la pile undo est dépilée de un élément puis cet élément est empilé dans la pile redo et les informations sont affectées au plateau grâce à la fonction "a\_l'envers".
+De même si le joueur demande l'action redo, la pile redo est dépilée de un élément puis cet élément est empilé dans la pile undo et les informations sont traitées par la fonction " a\_l'endroit".\\
 Si le joueur demande une initialisation du plateau, tous les déplacments du peronnages précedant l'initialisation sont réempilés dans la pile undo dans le sens inverse. C'est-à-dire que la dernière action effectuée se retrouve être la première empilée et la première action effectuée se retrouve être la dernière empilée.
 Lors de cette copie des déplacements l'argument test de la strucutre de l'histoique est mis à 1.
-En effet, si le joueur venait à demander un retour arrière après l'initialisation, le dépilement de l'initialisation va dépiler tous les éléments dont l'argument test vaut 1. Cela est effectué par les fonctions "undo init" et "redo init" du fichier "historique.c".
+En effet, si le joueur venait à demander un retour arrière après l'initialisation, le dépilement de l'initialisation va dépiler tous les éléments dont l'argument test vaut 1. Cela est effectué par les fonctions "undo\_init" et "redo\_init" du fichier "historique.c".
 Voir le code source des fichiers "historique.c" et "historique.h" pour plus de détails sur l'implémentation de l'historique.
 	
 	\chapter{l'édition de niveau}
@@ -109,5 +109,7 @@ Cependant, cette fonction n'est pas complète et dans certains cas, la fonction 
 Utiliser valgrind sur le programme montre qu'il y a eu des fuites de mémoire lors de la fin du programme. Or lorsqu'on utilise l'option "--leak-check=full", on observe que les fuites viennent de la SDL. 
 Une amélioration serait donc d'aller résoudre ces problèmes de fuites même si elles ne viennent pas du programme du jeu. 
 	\chapter{Les fonctions}
-Pour améliorer le programme, il faudrait racourcir les deux grosses fonctions de déplacement qui se trouvent dans les fichiers "jeu.c" et "action\_editeur.c". 
+Pour améliorer le programme, il faudrait racourcir les deux grosses fonctions de déplacement qui se trouvent dans les fichiers "jeu.c" et "action\_editeur.c".\\
+De puls, certaines fonctions, surtout celles qui permettent de déplacer des personnages (dans l'historique, l'editeur et jeu.c) sont presque les mêmes. Il serait interessant de voir si certaines ne pourraient pas être fusinnées et ainsi le code s'en retrouverait moins long. Cependant, il faudrait remanier le code complètement et elle réécrire en incluant ces paramètres.\\
+Enfin, les fonctions sont remplies de "if" et il est possible de les limiter. Cela serait une bonne amélioration du code.
 \end{document}
