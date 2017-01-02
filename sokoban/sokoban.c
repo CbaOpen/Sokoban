@@ -28,7 +28,7 @@ int niveau_fini(PLATEAU P){
 
 /////// DEBUT DU MAIN /////////
 int main(int argc, char** argv){
-	if(strcmp(argv[1], "-n")==0){
+	if(strcmp(argv[1], "-n")==0){ //mode jeu
 		if (argc != 4){ //si pas les bons arguments mis
 			fprintf(stderr, "erreur dans la ligne de commande\nformat attendu:\n%s -n niveau nomFichier\n",argv[0]);
 			exit(EXIT_FAILURE);
@@ -76,7 +76,7 @@ int main(int argc, char** argv){
 			}
 		}
 	
-	if(strcmp(argv[1], "-c")==0){
+	if(strcmp(argv[1], "-c")==0){ //mode editeur
 		if (argc != 3){ 
 			fprintf(stderr, "erreur dans la ligne de commande\nformat attendu: %s -c nomFichier\n",argv[0]);
 			exit(EXIT_FAILURE);

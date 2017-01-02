@@ -11,7 +11,7 @@ PILE creer_pile(){
 	return pile;
 	}
 
-void empiler(PILE *pile, struct personnage p, int caisse_dep, int direction, int test){
+void empiler(PILE *pile, struct coordonnees p, int caisse_dep, int direction, int test){
 	Element *nouveau = malloc(sizeof(Element));
 	if (pile == NULL || nouveau == NULL) {
 		printf("probleme d'allocation memoire ou le pointeur pile pointe vers NULL au lieu d'une struct pile");

@@ -25,6 +25,7 @@ int test_un_perso(PLATEAU P){
 	return FALSE;
 	}
 
+//fonction pour trouver le personnage
 PLATEAU trouver_perso(PLATEAU P){
 	int x,y;
 	
@@ -36,12 +37,12 @@ PLATEAU trouver_perso(PLATEAU P){
 	return P;
 	}
 
-int test_bord(struct personnage coord){
+int test_bord(struct coordonnees coord){
 	return coord.x == (N_LARG-1) || coord.x == 0 || coord.y == (N_HAUT-1) || coord.y == 0;
 	}
 
 //revoie les nouvelles coorddonnées en fonction de la direction
-struct personnage new_coord(struct personnage coord, int direction){
+struct coordonnees new_coord(struct coordonnees coord, int direction){
 	switch(direction){
 		case 1: //adjacent = HAUT
 			coord.y += 1;
@@ -61,7 +62,7 @@ struct personnage new_coord(struct personnage coord, int direction){
 //foncton recursive qui test si une case est un mur ou au bord de la fenetre graphique
 //cmp est une variable qui vaut zéro tant que les coordonnées de la case traitée ne vérifie pas te test des bords de la fenetre
 //si elle vaut 1, la fonction s'arrete à la fin du dépilement des appels et elle n'effectue pas les tests sur les autres dirrections
-int niveau_ferme(PLATEAU P, struct personnage coord, int direction1, int direction2){
+int niveau_ferme(PLATEAU P, struct coordonnees coord, int direction1, int direction2){
 	int cmp=0;
 	
 	if (P.la_case[coord.x][coord.y].mode == MUR) return 0;
@@ -123,6 +124,7 @@ PLATEAU les_tests(PLATEAU P, char **str, int *mode_action){
 	return P;
 	}
 
+//fonction qui s'occupe de placer les objets
 PLATEAU placer_objet(PLATEAU P, POINT a){
 	int x,y;
 	x = a.x/TAILLE_CASE;
@@ -159,6 +161,7 @@ int select_caisse(PLATEAU P, POINT p, int caisse_select, int *nb_deplacement){
 	return SELECT_HAUT;
 	}
 
+//change le mode d'action en Placer, bouger, bouger hasars, enregistrer et quitter
 PLATEAU changer_mode_action(PLATEAU P, POINT p, int* mode_action, char **str){
 	if (p.x < 5*LARG_BOUTON) *mode_action = QUITTER;
 	if (p.x < 4*LARG_BOUTON) *mode_action = ENREGISTRER;
@@ -185,6 +188,7 @@ PLATEAU gestion_touche_editeur(PLATEAU P, char touche, int *mode_action, char **
 	if (touche == 'H') { *mode_action = BOUGER_HASARD; P = les_tests(P,str, mode_action); }
 	if (touche == 'E') *mode_action = ENREGISTRER;
 	if (touche == 'Q') *mode_action = QUITTER;
+	return P;
 	}
 
 //fonction appelé dans le main qui gère les actions faites par le joueur

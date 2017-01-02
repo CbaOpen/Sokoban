@@ -16,13 +16,13 @@
 		};
 	
 	//structure qui permet de pointer l'emplacement du personnage
-	struct personnage{
+	struct coordonnees{
 		int x,y;
 		};
 	
 struct plateau {
 	struct une_case la_case[N_LARG][N_HAUT];
-	struct personnage perso;
+	struct coordonnees perso;
 	};
 
 typedef struct plateau PLATEAU;

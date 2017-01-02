@@ -125,6 +125,7 @@ void affiche_les_boutons_jeu(){
 	affiche_un_bouton(5,"QUITTER",0);
 	}
 
+//affiche les informations du mode éditeur.
 void affiche_info_editeur(char* str){
 	POINT centre,hd,bg;
 	

@@ -131,6 +131,7 @@ PLATEAU deplacer_perso_editeur(PLATEAU P, int fleche, int caisse_select, int *nb
 	return P;
 	}
 
+//
 int alea_fleche(PLATEAU P, int caisse_select){
 	int fleche = alea_int(50)%4;
 	
@@ -151,6 +152,7 @@ int alea_fleche(PLATEAU P, int caisse_select){
 	fleche = FLECHE_BAS; return fleche;
 	}
 
+//
 int test_caisse_adj(PLATEAU P){
 	int nb=0;
 	
@@ -161,6 +163,7 @@ int test_caisse_adj(PLATEAU P){
 	return nb;
 	}
 
+//
 int rechercher_caisse(PLATEAU P, int place){
 	int cmp=0;
 	
@@ -186,7 +189,8 @@ int rechercher_caisse(PLATEAU P, int place){
 			return SELECT_GAUCHE;
 		}
 	}
-	
+
+//
 int alea_select(PLATEAU P, int nb_caisse){
 	srand(time(NULL));
 	
@@ -196,6 +200,7 @@ int alea_select(PLATEAU P, int nb_caisse){
 	return rechercher_caisse(P, alea_int(4)+1);
 	}
 
+//
 PLATEAU deplacer_hasard(PLATEAU P){
 	int caisse_select = 0, nb_deplacement = 0;
 	int N, alea, fleche, nb_caisse;
