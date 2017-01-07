@@ -5,14 +5,18 @@ CFLAGS=-c -g -Wall
 jouer: compil
 	./sokoban -n 1 sasquatch1.xsb
 	
-test: compil
-	./sokoban -n 40 sasquatch1.xsb
+test: clean compil
+	./sokoban -n 8 sasquatch1.xsb
 
 editeur: compil
 	./sokoban -c niveau.xsb
 
 compil: sokoban
 	
+
+indent:
+	indent -linux sokoban.c historique.c historique.h jouer.c jouer.h lecture_ecriture.c lecture_ecriture.h
+	indent -linux interface.c interface.h editeur.c editeur.h editeur_action.c editeur_action.h
 
 sokoban: sokoban.o lecture_ecriture.o interface.o historique.o jouer.o editeur_action.o editeur.o
 	gcc -o sokoban sokoban.o lecture_ecriture.o interface.o historique.o jouer.o editeur_action.o editeur.o -luvsqgraphics `sdl-config --libs` -lm -lSDL_ttf

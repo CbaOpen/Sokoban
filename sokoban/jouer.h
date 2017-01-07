@@ -7,15 +7,14 @@
 #ifndef __JOUER_H
 #define __JOUER_H
 
-struct info{
-	char* nom_fic;
+struct info {
+	char *nom_fic;
 	int niveau;
 	int coups_joues;
 	int nb_niv;
-	};
+};
 typedef struct info INFO;
 
-PLATEAU fait_action(PLATEAU P, INFO* I, PILE *pileU, PILE *pileR);
-
+PLATEAU fait_action(PLATEAU P, INFO * I, PILE * pileU, PILE * pileR);
 
 #endif
