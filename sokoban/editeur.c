@@ -83,21 +83,14 @@ int niveau_ferme(PLATEAU P, struct coordonnees coord, int direction1,
 		return 1;
 	if (direction1 == DROITE) {
 		if (direction2 == BAS) {	//section droite_bas
-			cmp +=
-			    niveau_ferme(P, new_coord(coord, DROITE), DROITE,
+			cmp += niveau_ferme(P, new_coord(coord, DROITE), DROITE,
 					 BAS);
 			if (cmp == 0)
-				cmp +=
-				    niveau_ferme(P, new_coord(coord, BAS),
-						 DROITE, BAS);
+				cmp += niveau_ferme(P, new_coord(coord, BAS), DROITE, BAS);
 		} else {	//section droite_haut
-			cmp +=
-			    niveau_ferme(P, new_coord(coord, HAUT), DROITE,
-					 HAUT);
+			cmp += niveau_ferme(P, new_coord(coord, HAUT), DROITE, HAUT);
 			if (cmp == 0)
-				cmp +=
-				    niveau_ferme(P, new_coord(coord, DROITE),
-						 DROITE, HAUT);
+				cmp += niveau_ferme(P, new_coord(coord, DROITE), DROITE, HAUT);
 		}
 	} else {
 		if (direction2 == BAS) {	//section gauche_bas
@@ -145,8 +138,7 @@ int test_niveau_ferme(PLATEAU P)
 //
 PLATEAU les_tests(PLATEAU P, char **str, int *mode_action)
 {
-	if ((*mode_action == BOUGER || *mode_action == BOUGER_HASARD)
-	    && test_un_perso(P) == FALSE) {
+	if ((*mode_action == BOUGER || *mode_action == BOUGER_HASARD) && test_un_perso(P) == FALSE) {
 		*mode_action = PLACER;
 		free(*str);
 		*str = strdup("Il faut un personnage");
@@ -185,9 +177,7 @@ int select_caisse(PLATEAU P, POINT p, int caisse_select, int *nb_deplacement)
 	x = p.x / TAILLE_CASE;
 	y = p.y / TAILLE_CASE;
 
-	if (P.la_case[x][y].mode != CAISSE
-	    || (fabs(P.perso.x - x) != 1 && fabs(P.perso.y - y) != 1)
-	    || (fabs(P.perso.x - x) == fabs(P.perso.y - y)))
+	if (P.la_case[x][y].mode != CAISSE || (fabs(P.perso.x - x) != 1 && fabs(P.perso.y - y) != 1) || (fabs(P.perso.x - x) == fabs(P.perso.y - y)))
 		return caisse_select;
 	*nb_deplacement = 0;
 	if (caisse_select != 0) {
@@ -269,9 +259,7 @@ PLATEAU gestion_touche_editeur(PLATEAU P, char touche, int *mode_action,
 }
 
 //fonction appelé dans le main qui gère les actions faites par le joueur
-PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str,
-			     int *caisse_select, int *nb_deplacement,
-			     char *nom_fichier)
+PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str, int *caisse_select, int *nb_deplacement, char *nom_fichier)
 {
 	int event = 0, fleche = 0, n;
 	char touche;
@@ -292,8 +280,7 @@ PLATEAU faire_action_editeur(PLATEAU P, int *mode_action, char **str,
 		attendre(300);
 	}
 	if (event == EST_CLIC)
-		P = gestion_clic_editeur(P, str, p, mode_action, caisse_select,
-					 nb_deplacement);
+		P = gestion_clic_editeur(P, str, p, mode_action, caisse_select, nb_deplacement);
 	if (event == EST_TOUCHE)
 		P = gestion_touche_editeur(P, touche, mode_action, str);
 	if (*mode_action == BOUGER_HASARD)

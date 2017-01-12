@@ -14,8 +14,7 @@ int test2(PLATEAU P, int x, int y)
 		return FALSE;
 	if (P.la_case[P.perso.x + x][P.perso.y + y].mode == CAISSE)
 		return FALSE;
-	if (P.perso.x + x < 0 || P.perso.x + x > N_LARG - 1 || P.perso.y + y < 0
-	    || P.perso.y + y > N_HAUT - 1)
+	if (P.perso.x + x < 0 || P.perso.x + x > N_LARG - 1 || P.perso.y + y < 0 || P.perso.y + y > N_HAUT - 1)
 		return FALSE;
 	return TRUE;
 }
@@ -160,12 +159,10 @@ int alea_fleche(PLATEAU P, int caisse_select)
 			fleche = FLECHE_HAUT;
 			return fleche;
 		} else
-			fleche++;
 		if (fleche == 1 && test2(P, 1, 0)) {
 			fleche = FLECHE_DROITE;
 			return fleche;
 		} else
-			fleche++;
 		if (fleche == 2 && test2(P, 0, -1)) {
 			fleche = FLECHE_BAS;
 			return fleche;
